@@ -1,0 +1,3 @@
+[submodule "poise"]
+	path = "poise"
+	url = "https://github.com/kangalioo/poise"
