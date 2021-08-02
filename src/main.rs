@@ -1,12 +1,11 @@
 use poise::serenity_prelude as serenity;
-use std::{env::var, time::Duration};
 use serde::Deserialize;
+use std::{env::var, time::Duration};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
 
 struct Data {
-    bot_user_id: serenity::UserId,
     http: reqwest::Client,
 }
 
@@ -36,21 +35,21 @@ code here
 
 #[derive(Deserialize)]
 struct Response {
-    code: Option<usize>,
     language: String,
     output: String,
-    signal: Option<String>,
     stderr: String,
-    stdout: String,
-    version: String
 }
 
 #[derive(Deserialize)]
 struct Bin {
-    key: String
+    key: String,
 }
 
-async fn execute_piston(ctx: PrefixContext<'_>, lang: String, code: String) -> Result<Response, Error> {
+async fn execute_piston(
+    ctx: PrefixContext<'_>,
+    lang: String,
+    code: String,
+) -> Result<Response, Error> {
     let params = [("lang", lang), ("code", code)];
     let json = ctx
         .data
@@ -83,7 +82,11 @@ async fn post_bin(ctx: PrefixContext<'_>, content: String) -> Result<String, Err
 
 #[poise::command(track_edits, broadcast_typing)]
 async fn hello(ctx: PrefixContext<'_>) -> Result<(), Error> {
-    poise::say_reply(poise::Context::Prefix(ctx), format!("Hello, {}", ctx.msg.author)).await?;
+    poise::say_reply(
+        poise::Context::Prefix(ctx),
+        format!("Hello, {}", ctx.msg.author),
+    )
+    .await?;
 
     Ok(())
 }
@@ -91,7 +94,7 @@ async fn hello(ctx: PrefixContext<'_>) -> Result<(), Error> {
 #[poise::command(track_edits)]
 async fn help(
     ctx: PrefixContext<'_>,
-    #[description = "A command to show help for."] command: Option<String>
+    #[description = "A command to show help for."] command: Option<String>,
 ) -> Result<(), Error> {
     let bottom_text = "Type run help command for more info on a command.
 You can edit your message to the bot and the bot will edit its response.";
@@ -100,32 +103,38 @@ You can edit your message to the bot and the bot will edit its response.";
         poise::Context::Prefix(ctx),
         command.as_deref(),
         bottom_text,
-        poise::defaults::HelpResponseMode::Default
-    ).await?;
+        poise::defaults::HelpResponseMode::Default,
+    )
+    .await?;
 
     Ok(())
 }
 
 #[poise::command(track_edits, broadcast_typing)]
-async fn run(
-    ctx: PrefixContext<'_>,
-    code: poise::CodeBlock
-) -> Result<(), Error> {
+async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error> {
     match code.language {
         None => {
-            poise::say_reply(poise::Context::Prefix(ctx), "The codeblock is missing a language...".to_string());
+            poise::say_reply(
+                poise::Context::Prefix(ctx),
+                "The codeblock is missing a language...".to_string(),
+            )
+            .await?;
 
             Ok(())
-        },
+        }
         Some(lang) => {
             let res = execute_piston(ctx, lang, code.code).await;
 
             match res {
                 Err(_) => {
-                    poise::say_reply(poise::Context::Prefix(ctx), "You provided an invalid language...".to_string());
+                    poise::say_reply(
+                        poise::Context::Prefix(ctx),
+                        "You provided an invalid language...".to_string(),
+                    )
+                    .await?;
 
                     Ok(())
-                },
+                }
                 Ok(re) => {
                     if re.output.chars().count() > 500 {
                         let url = post_bin(ctx, re.output).await?;
@@ -133,24 +142,31 @@ async fn run(
 <{}>
                         ", url);
 
-                        poise::say_reply(poise::Context::Prefix(ctx), msg);
+                        poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
                         Ok(())
                     } else if re.stderr.chars().count() > 0 {
-                        let msg = format!("An error occured!
+                        let msg = format!(
+                            "An error occured!
 ```sh
 {}
 ```
-                        ", re.stderr);
+                        ",
+                            re.stderr
+                        );
 
-                        poise::say_reply(poise::Context::Prefix(ctx), msg);
+                        poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
                         Ok(())
                     } else {
-                        let msg = format!("```{}
+                        let lang = re.language;
+                        let msg = format!(
+                            "```{}
 {}
 ```
-                        ", *code.language.unwrap_or(re.language), re.output);
+                        ",
+                            &lang, re.output
+                        );
 
-                        poise::say_reply(poise::Context::Prefix(ctx), msg);
+                        poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
                         Ok(())
                     }
                 }
@@ -163,15 +179,10 @@ async fn run(
 async fn main() -> Result<(), Error> {
     let mut options = poise::FrameworkOptions {
         prefix_options: poise::PrefixFrameworkOptions {
-            additional_prefixes: &[
-                "run,",
-                "run, ",
-                "can you run, ",
-                "run"
-            ],
-            edit_tracker: Some(poise::EditTracker::for_timespan(
-                Duration::from_secs(3600 * 24 * 2),
-            )),
+            additional_prefixes: &["run,", "run, ", "can you run, ", "run"],
+            edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(
+                3600 * 24 * 2,
+            ))),
             ..Default::default()
         },
         on_error: |error, ctx| Box::pin(on_error(error, ctx)),
@@ -185,11 +196,10 @@ async fn main() -> Result<(), Error> {
     let framework = poise::Framework::new(
         "run ".to_owned(),
         serenity::ApplicationId(var("APPLICATION_ID")?.parse()?),
-        move |_ctx, bot, _framework| {
+        move |_ctx, _bot, _framework| {
             Box::pin(async move {
                 Ok(Data {
-                    bot_user_id: bot.user.id,
-                    http: reqwest::Client::new()
+                    http: reqwest::Client::new(),
                 })
             })
         },
