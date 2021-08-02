@@ -82,7 +82,7 @@ async fn post_bin(ctx: PrefixContext<'_>, content: String) -> Result<String, Err
 
 #[poise::command(track_edits, explanation_fn = "help_help")]
 async fn help(ctx: PrefixContext<'_>, command: Option<String>) -> Result<(), Error> {
-    let bottom_text = "Type :help command for more info on a command.
+    let bottom_text = "Type ~help command for more info on a command.
 You can edit your message to the bot and the bot will edit its response.";
 
     poise::defaults::help(
@@ -196,7 +196,7 @@ async fn main() -> Result<(), Error> {
     options.command(run(), |f| f.category("Main"));
 
     let framework = poise::Framework::new(
-        ":".to_owned(),
+        "~".to_owned(),
         serenity::ApplicationId(var("APPLICATION_ID")?.parse()?),
         move |_ctx, _bot, _framework| {
             Box::pin(async move {
