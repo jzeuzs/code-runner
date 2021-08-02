@@ -138,9 +138,9 @@ async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error
                     Ok(())
                 }
                 Ok(re) => {
-                    if re.output.chars().count() > 500 {
+                    if re.output.chars().count() > 1000 {
                         let url = post_bin(ctx, re.output).await?;
-                        let msg = format!("The response was longer than 500 characters, so I uploaded it to a paste!
+                        let msg = format!("The response was longer than 1k characters, so I uploaded it to a paste!
 <{}>
                         ", url);
 
