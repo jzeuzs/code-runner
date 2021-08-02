@@ -72,6 +72,8 @@ async fn main() -> Result<(), Error> {
         ..Default::default()
     };
 
+    options.command(hello(), |f| f.category("Main"));
+
     let framework = poise::Framework::new(
         "run".to_owned(),
         serenity::ApplicationId(var("APPLICATION_ID")?.parse()?),
