@@ -80,23 +80,9 @@ async fn post_bin(ctx: PrefixContext<'_>, content: String) -> Result<String, Err
     Ok(url)
 }
 
-#[poise::command(track_edits, broadcast_typing)]
-async fn hello(ctx: PrefixContext<'_>) -> Result<(), Error> {
-    poise::say_reply(
-        poise::Context::Prefix(ctx),
-        format!("Hello, {}", ctx.msg.author),
-    )
-    .await?;
-
-    Ok(())
-}
-
-#[poise::command(track_edits)]
-async fn help(
-    ctx: PrefixContext<'_>,
-    #[description = "A command to show help for."] command: Option<String>,
-) -> Result<(), Error> {
-    let bottom_text = "Type run help command for more info on a command.
+#[poise::command(track_edits, explanation_fn = "help_help")]
+async fn help(ctx: PrefixContext<'_>, command: Option<String>) -> Result<(), Error> {
+    let bottom_text = "Type :help command for more info on a command.
 You can edit your message to the bot and the bot will edit its response.";
 
     poise::defaults::help(
@@ -110,7 +96,14 @@ You can edit your message to the bot and the bot will edit its response.";
     Ok(())
 }
 
-#[poise::command(track_edits, broadcast_typing)]
+fn help_help() -> String {
+    "Provides a list of all commands.
+Or if a command is provided, it will show information about that specific command.
+    "
+    .to_string()
+}
+
+#[poise::command(track_edits, broadcast_typing, explanation_fn = "run_help")]
 async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error> {
     match code.language {
         None => {
@@ -177,6 +170,14 @@ async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error
     }
 }
 
+fn run_help() -> String {
+    "Executes code in a virtual sandbox.
+If the result is more than 1k characters, it will post the result to a paste.
+If an error occurred, it will send the error.
+    "
+    .to_string()
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let mut options = poise::FrameworkOptions {
@@ -191,12 +192,11 @@ async fn main() -> Result<(), Error> {
         ..Default::default()
     };
 
-    options.command(hello(), |f| f.category("Main"));
     options.command(help(), |f| f.category("Main"));
     options.command(run(), |f| f.category("Main"));
 
     let framework = poise::Framework::new(
-        "run ".to_owned(),
+        ":".to_owned(),
         serenity::ApplicationId(var("APPLICATION_ID")?.parse()?),
         move |_ctx, _bot, _framework| {
             Box::pin(async move {
