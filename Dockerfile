@@ -5,6 +5,7 @@ COPY . .
 
 RUN apt-get update && \
 	apt-get install -y git build-essential && \
-	git clone https://github.com/kangalioo/poise
+	git clone https://github.com/kangalioo/poise && \
+	cargo build --release
 
-CMD ["cargo", "run"]
+CMD ["./target/release/code-runner"]
