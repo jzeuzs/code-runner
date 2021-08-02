@@ -126,12 +126,14 @@ async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error
             let res = execute_piston(ctx, lang, code.code).await;
 
             match res {
-                Err(_) => {
+                Err(e) => {
                     poise::say_reply(
                         poise::Context::Prefix(ctx),
                         "You provided an invalid language...".to_string(),
                     )
                     .await?;
+
+                    println!("{:?}", e);
 
                     Ok(())
                 }
