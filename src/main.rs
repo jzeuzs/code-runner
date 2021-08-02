@@ -21,20 +21,6 @@ or
 code here
 \\`\\`\\`"
                     .to_owned()
-            } else if let poise::CommandErrorContext::Prefix(poise::PrefixCommandErrorContext {
-                command:
-                    poise::PrefixCommand {
-                        options:
-                            poise::PrefixCommandOptions {
-                                multiline_help: Some(multiline_help),
-                                ..
-                            },
-                        ..
-                    },
-                ..
-            }) = ctx
-            {
-                format!("**{}**\n{}", error, multiline_help())
             } else {
                 error.to_string()
             }
@@ -50,6 +36,24 @@ code here
 #[poise::command(track_edits, broadcast_typing)]
 async fn hello(ctx: PrefixContext<'_>) -> Result<(), Error> {
     poise::say_reply(poise::Context::Prefix(ctx), format!("Hello, {}", ctx.msg.author)).await?;
+
+    Ok(())
+}
+
+#[poise::command(track_edits)]
+async fn help(
+    ctx: PrefixContext<'_>,
+    #[description = "A command to show help for."] command: Option<String>
+) -> Result<(), Error> {
+    let bottom_text = "Type ?help command for more info on a command.
+You can edit your message to the bot and the bot will edit its response.";
+
+    poise::defaults::help(
+        poise::Context::Prefix(ctx),
+        command.as_deref(),
+        bottom_text,
+        poise::defaults::HelpResponseMode::Default
+    ).await?;
 
     Ok(())
 }
@@ -73,6 +77,7 @@ async fn main() -> Result<(), Error> {
     };
 
     options.command(hello(), |f| f.category("Main"));
+    options.command(help(), |f| f.category("Main"));
 
     let framework = poise::Framework::new(
         "run".to_owned(),
