@@ -1,6 +1,9 @@
+#[macro_use]
+extern crate version;
+
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
-use std::{env::var, time::Duration};
+use std::{env::var, process::Command, time::Duration};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
@@ -103,7 +106,12 @@ Or if a command is provided, it will show information about that specific comman
     .to_string()
 }
 
-#[poise::command(track_edits, broadcast_typing, explanation_fn = "run_help")]
+#[poise::command(
+    track_edits,
+    broadcast_typing,
+    explanation_fn = "run_help",
+    aliases("r")
+)]
 async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error> {
     match code.language {
         None => {
@@ -182,19 +190,56 @@ If an error occurred, it will send the error.
     .to_string()
 }
 
+#[poise::command(track_edits, explanation_fn = "source_help", aliases("github"))]
+async fn source(ctx: PrefixContext<'_>) -> Result<(), Error> {
+    let msg = "This is where my code is publicly hosted!
+https://github.com/1chiSensei/code-runner
+    ";
+
+    poise::say_prefix_reply(ctx, msg.to_string()).await?;
+    Ok(())
+}
+
+fn source_help() -> String {
+    "Shows the github repository of the bot.".to_string()
+}
+
+#[poise::command(track_edits, explanation_fn = "info_help", aliases("information"))]
+async fn info(ctx: PrefixContext<'_>) -> Result<(), Error> {
+    let rust_ver = Command::new("rustc").arg("--version").output()?;
+    let msg = format!(
+        "I am a bot that runs code.
+Supported Languages: <https://github.com/1chiSensei/code-runner#supportedlanguages>
+
+Version: `{}`
+Rust: `{}`
+    ",
+        version!(),
+        String::from_utf8(rust_ver.stdout)?
+    );
+
+    poise::say_prefix_reply(ctx, msg.to_string()).await?;
+    Ok(())
+}
+
+fn info_help() -> String {
+    "Shows general information about the bot.".to_string()
+}
+
 async fn listener(
     ctx: &serenity::Context,
     event: &poise::Event<'_>,
     _framework: &poise::Framework<Data, Error>,
-    _data: &Data
+    _data: &Data,
 ) -> Result<(), Error> {
     match event {
         poise::Event::Ready { data_about_bot: _ } => {
-            ctx.set_activity(serenity::Activity::playing("~run | ~help")).await;
+            ctx.set_activity(serenity::Activity::playing("~run | ~help"))
+                .await;
 
             Ok(())
-        },
-        _ => Ok(())
+        }
+        _ => Ok(()),
     }
 }
 
@@ -215,6 +260,8 @@ async fn main() -> Result<(), Error> {
 
     options.command(help(), |f| f.category("Main"));
     options.command(run(), |f| f.category("Main"));
+    options.command(source(), |f| f.category("Main"));
+    options.command(info(), |f| f.category("Main"));
 
     let framework = poise::Framework::new(
         "~".to_owned(),
