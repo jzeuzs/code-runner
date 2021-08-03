@@ -122,7 +122,9 @@ async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error
                 Err(e) => {
                     poise::say_reply(
                         poise::Context::Prefix(ctx),
-                        "You provided an invalid language...".to_string(),
+                        "You provided an invalid language...
+Visit https://github.com/1chiSensei/code-runner#supportedlanguages to know all of the supported languages!
+                        ".to_string(),
                     )
                     .await?;
 
