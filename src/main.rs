@@ -182,6 +182,22 @@ If an error occurred, it will send the error.
     .to_string()
 }
 
+async fn listener(
+    ctx: &serenity::Context,
+    event: &poise::Event<'_>,
+    _framework: &poise::Framework<Data, Error>,
+    _data: &Data
+) -> Result<(), Error> {
+    match event {
+        poise::Event::Ready { data_about_bot: _ } => {
+            ctx.set_activity(serenity::Activity::playing("~run | ~help")).await;
+
+            Ok(())
+        },
+        _ => Ok(())
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let mut options = poise::FrameworkOptions {
@@ -193,6 +209,7 @@ async fn main() -> Result<(), Error> {
             ..Default::default()
         },
         on_error: |error, ctx| Box::pin(on_error(error, ctx)),
+        listener: |ctx, event, framework, data| Box::pin(listener(ctx, event, framework, data)),
         ..Default::default()
     };
 
@@ -202,10 +219,8 @@ async fn main() -> Result<(), Error> {
     let framework = poise::Framework::new(
         "~".to_owned(),
         serenity::ApplicationId(var("APPLICATION_ID")?.parse()?),
-        move |ctx, _bot, _framework| {
+        move |_ctx, _bot, _framework| {
             Box::pin(async move {
-                ctx.set_activity(serenity::Activity::playing("")).await;
-
                 Ok(Data {
                     http: reqwest::Client::new(),
                 })
