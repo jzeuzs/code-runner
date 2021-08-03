@@ -109,7 +109,9 @@ async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error
         None => {
             poise::say_reply(
                 poise::Context::Prefix(ctx),
-                "The codeblock is missing a language...".to_string(),
+                "The codeblock is missing a language...
+Visit https://github.com/1chiSensei/code-runner#supportedlanguages to know all of the supported languages!
+                ".to_string(),
             )
             .await?;
 
@@ -200,8 +202,10 @@ async fn main() -> Result<(), Error> {
     let framework = poise::Framework::new(
         "~".to_owned(),
         serenity::ApplicationId(var("APPLICATION_ID")?.parse()?),
-        move |_ctx, _bot, _framework| {
+        move |ctx, _bot, _framework| {
             Box::pin(async move {
+                ctx.set_activity(serenity::Activity::playing("")).await;
+
                 Ok(Data {
                     http: reqwest::Client::new(),
                 })
