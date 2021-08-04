@@ -205,6 +205,16 @@ app.post('/', async (req, _reply) => {
 				stderr: res.exitCode !== 0 ? res.output : ''
 			};
 		}
+		case 'agda': {
+			lang = 'agda';
+			const res = await tio(code, 'agda');
+
+			return {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+		}
 	}
 	console.log(lang)
 
