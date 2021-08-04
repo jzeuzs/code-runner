@@ -1,0 +1,38 @@
+{
+  "name": "@code-runner/server",
+  "version": "1.0.0",
+  "description": "The server bridging all the requests to piston/tio.",
+  "main": "./dist/index.js",
+  "type": "module",
+  "author": "Yoshida Tomio <mail@tomio.codes>",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "patch-package",
+    "build": "tsc",
+    "start": "node ."
+  },
+  "devDependencies": {
+    "@sapphire/eslint-config": "^3.2.3",
+    "@sapphire/prettier-config": "^1.1.6",
+    "@sapphire/ts-config": "^3.0.0",
+    "@types/node": "^16.4.11",
+    "@types/pino": "^6.3.11",
+    "eslint": "^7.32.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@mgcrea/fastify-request-logger": "^0.5.2",
+    "@mgcrea/pino-pretty-compact": "^0.5.0",
+    "fastify": "^3.20.1",
+    "fastify-cookie": "^5.3.1",
+    "fastify-formbody": "^5.1.0",
+    "patch-package": "^6.4.7",
+    "pino-pretty": "^5.1.2",
+    "piston-client": "^1.0.2",
+    "postinstall-postinstall": "^2.1.0",
+    "tio.js": "^1.1.0"
+  },
+  "prettier": "@sapphire/prettier-config"
+}
