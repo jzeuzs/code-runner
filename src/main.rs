@@ -4,6 +4,7 @@ extern crate version;
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
 use std::{env::var, process::Command, time::Duration};
+use sys_info::linux_os_release;
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
@@ -207,15 +208,21 @@ fn source_help() -> String {
 #[poise::command(track_edits, explanation_fn = "info_help", aliases("information"))]
 async fn info(ctx: PrefixContext<'_>) -> Result<(), Error> {
     let rust_ver = Command::new("rustc").arg("--version").output()?;
+    let cargo_ver = Command::new("cargo").arg("--version").output()?;
+    let os = linux_os_release()?;
     let msg = format!(
         "I am a bot that runs code.
 Supported Languages: <https://github.com/1chiSensei/code-runner#supportedlanguages>
 
 Version: `{}`
 Rust: `{}`
+Cargo: `{}`
+OS: `{}`
     ",
         version!(),
-        String::from_utf8(rust_ver.stdout)?
+        String::from_utf8(rust_ver.stdout)?,
+        String::from_utf8(cargo_ver.stdout)?,
+        os.pretty_name.unwrap_or("Linux".to_string())
     );
 
     poise::say_prefix_reply(ctx, msg.to_string()).await?;
