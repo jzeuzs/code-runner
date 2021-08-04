@@ -77,6 +77,7 @@ A code runner discord bot.
 - [`idris`](https://www.idris-lang.org/)
 - [`mamba`](https://github.com/JSAbrahams/mamba)
 - [`sqlite`](https://www.sqlite.org/)
+- [`agda`](https://wiki.portal.chalmers.se/agda)
 
 ## Privacy Policy
 
