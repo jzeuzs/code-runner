@@ -1,11 +1,25 @@
-# code-runner
+# code-runner [![Bot invite](https://img.shields.io/badge/Bot-Invite-blue?logo=discord)](https://discord.com) [![Github Stars](https://img.shields.io/github/stars/1chiSensei/code-runner?style=social)](https://github.com/1chiSensei/code-runner) [![Languages](https://img.shields.io/github/languages/top/1chiSensei/code-runner)](https://github.com/1chiSensei/code-runner) [![Discord server](https://img.shields.io/discord/830047984573480970)](https://discord.gg/zGvtAnGhdP)
+
 A code runner discord bot.
 
+## Commands
+
+> Prefix: `~`
+
+- `run` - Runs code in a virtual sandbox.
+  - Example: ~run \`\`\`js
+  - console.log('Hello, World');
+  - \`\`\`
+- `help` - Gives a list of all commands or gives info about a command.
+- `source` - Links you to the github page of the bot.
+- `info` - Provides general information about the bot.
+
 ## Supported Languages
+
 - [`bash`](https://www.gnu.org/software/bash/)
 - [`awk`](https://www.gnu.org/s/gawk/manual/gawk.html)
 - [`brainfuck`](https://esolangs.org/wiki/Brainfuck)
-- [`c`](https://en.wikipedia.org/wiki/C_(programming_language))
+- [`c`](<https://en.wikipedia.org/wiki/C_(programming_language)>)
 - [`c++`](https://www.cplusplus.com/)
 - [`cjam`](https://esolangs.org/wiki/CJam)
 - [`clojure`](https://clojure.org/)
@@ -32,7 +46,7 @@ A code runner discord bot.
 - [`jelly`](https://github.com/DennisMitchell/jellylanguage)
 - [`julia`](https://julialang.org/)
 - [`kotlin`](https://kotlinlang.org/)
-- [`lisp`](https://en.wikipedia.org/wiki/Lisp_(programming_language))
+- [`lisp`](<https://en.wikipedia.org/wiki/Lisp_(programming_language)>)
 - [`lolcode`](http://www.lolcode.org/)
 - [`lua`](https://www.lua.org/)
 - [`nasm`](https://en.wikipedia.org/wiki/Netwide_Assembler)
@@ -42,7 +56,7 @@ A code runner discord bot.
 - [`octave`](https://www.gnu.org/software/octave/index)
 - [`osabie`](https://github.com/Adriandmen/05AB1E)
 - [`paradoc`](https://github.com/betaveros/paradoc)
-- [`pascal`](https://en.wikipedia.org/wiki/Pascal_(programming_language))
+- [`pascal`](<https://en.wikipedia.org/wiki/Pascal_(programming_language)>)
 - [`perl`](https://www.perl.org/)
 - [`php`](https://www.php.net/)
 - [`ponylang`](https://www.ponylang.io/)

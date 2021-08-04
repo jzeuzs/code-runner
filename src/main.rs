@@ -225,7 +225,7 @@ OS: `{}`
         os.pretty_name.unwrap_or("Linux".to_string())
     );
 
-    poise::say_prefix_reply(ctx, msg.to_string()).await?;
+    poise::say_prefix_reply(ctx, msg).await?;
     Ok(())
 }
 
