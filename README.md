@@ -1,4 +1,4 @@
-# code-runner [![Bot invite](https://img.shields.io/badge/Bot-Invite-blue?logo=discord)](https://discord.com) [![Github Stars](https://img.shields.io/github/stars/1chiSensei/code-runner?style=social)](https://github.com/1chiSensei/code-runner) [![Languages](https://img.shields.io/github/languages/top/1chiSensei/code-runner)](https://github.com/1chiSensei/code-runner) [![Discord server](https://img.shields.io/discord/830047984573480970)](https://discord.gg/zGvtAnGhdP)
+# code-runner [![Bot invite](https://img.shields.io/badge/Bot-Invite-blue?logo=discord)](https://discord.com/api/oauth2/authorize?client_id=871593892280160276&permissions=3072&scope=bot) [![Github Stars](https://img.shields.io/github/stars/1chiSensei/code-runner?style=social)](https://github.com/1chiSensei/code-runner) [![Languages](https://img.shields.io/github/languages/top/1chiSensei/code-runner)](https://github.com/1chiSensei/code-runner) [![Discord server](https://img.shields.io/discord/830047984573480970)](https://discord.gg/zGvtAnGhdP)
 
 A code runner discord bot.
 
