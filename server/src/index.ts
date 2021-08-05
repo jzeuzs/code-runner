@@ -261,8 +261,8 @@ app.post('/', async (req, _reply) => {
 	const res = await client.execute(lang, code);
 	const data = {
 		language: res.language,
-		output: res.output,
-		stderr: res.exitCode !== 0 ? res.output : ''
+		output: res.run.output,
+		stderr: res.run.stderr
 	};
 
 	await setCache(lang, code, data);
