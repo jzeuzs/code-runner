@@ -3,7 +3,7 @@ extern crate version;
 
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
-use std::{env::var, process::Command, time::Duration};
+use std::{collections::HashMap, env::var, process::Command, time::Duration};
 use sys_info::linux_os_release;
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -233,6 +233,21 @@ fn info_help() -> String {
     "Shows general information about the bot.".to_string()
 }
 
+async fn post_bot_list(guilds: usize) -> Result<(), Error> {
+    let http = reqwest::Client::new();
+    let mut infinity_body: HashMap<String, usize> = HashMap::new();
+
+    infinity_body.insert("servers".to_string(), guilds);
+
+    http.post("https://api.infinitybotlist.com/bot/871593892280160276")
+        .json(&infinity_body)
+        .header("authorization", var("INFINITY_KEY")?)
+        .send()
+        .await?;
+
+    Ok(())
+}
+
 async fn listener(
     ctx: &serenity::Context,
     event: &poise::Event<'_>,
@@ -240,7 +255,8 @@ async fn listener(
     _data: &Data,
 ) -> Result<(), Error> {
     match event {
-        poise::Event::Ready { data_about_bot: _ } => {
+        poise::Event::Ready { data_about_bot } => {
+            post_bot_list(data_about_bot.guilds.len()).await?;
             ctx.set_activity(serenity::Activity::playing("~run | ~help"))
                 .await;
 
