@@ -4,11 +4,21 @@ import form from 'fastify-formbody';
 import tio from 'tio.js';
 import logger from '@mgcrea/fastify-request-logger';
 import prettifier from '@mgcrea/pino-pretty-compact';
+import Redis from 'ioredis';
 
 tio.setDefaultTimeout(10000);
 
+const redis = new Redis(process.env.REDIS_URL);
 const client = piston({ server: 'https://emkc.org' });
 const app = fastify({ disableRequestLogging: true, logger: { prettyPrint: true, prettifier } });
+const getCache = async (lang: string, code: string) => {
+	const cached = await redis.get(`${lang}-${code}`).catch(() => null);
+
+	if (!cached) return null;
+	
+	return JSON.parse(cached);
+};
+const setCache = (lang: string, code: string, data: Record<string, string>) => redis.setex(`${lang}-${code}`, 604800, JSON.stringify(data));
 
 app.register(form);
 app.register(logger);
@@ -175,58 +185,89 @@ app.post('/', async (req, _reply) => {
 			break;
 		case 'idris': {
 			lang = 'idris';
-			const res = await tio(code, 'idris');
+			const cached = await getCache(lang, code);
 
-			return {
+			if (cached) return cached;
+
+			const res = await tio(code, 'idris');
+			const data = {
 				language: res.language,
 				output: res.output,
 				stderr: res.exitCode !== 0 ? res.output : ''
 			};
+
+			await setCache(lang, code, data);
+
+			return data;
 		}
 		case 'mamba':
 		case 'mb': {
 			lang = 'mamba';
-			const res = await tio(code, 'mamba');
+			const cached = await getCache(lang, code);
 
-			return {
+			if (cached) return cached;
+
+			const res = await tio(code, 'mamba');
+			const data = {
 				language: res.language,
 				output: res.output,
 				stderr: res.exitCode !== 0 ? res.output : ''
 			};
+
+			await setCache(lang, code, data);
+
+			return data;
 		}
 		case 'sql':
 		case 'sqlite': {
 			lang = 'sqlite';
-			const res = await tio(code, 'sqlite');
+			const cached = await getCache(lang, code);
 
-			return {
+			if (cached) return cached;
+
+			const res = await tio(code, 'sqlite');
+			const data = {
 				language: res.language,
 				output: res.output,
 				stderr: res.exitCode !== 0 ? res.output : ''
 			};
+
+			await setCache(lang, code, data);
+
+			return data;
 		}
 		case 'agda': {
 			lang = 'agda';
-			const res = await tio(code, 'agda');
+			const cached = await getCache(lang, code);
 
-			return {
+			if (cached) return cached;
+
+			const res = await tio(code, 'agda');
+			const data = {
 				language: res.language,
 				output: res.output,
 				stderr: res.exitCode !== 0 ? res.output : ''
 			};
+
+			await setCache(lang, code, data);
+
+			return data;
 		}
 	}
-	console.log(lang)
+	const cached = await getCache(lang, code);
+
+	if (cached) return cached;
 
 	const res = await client.execute(lang, code);
-
-	console.log(res);
-
-	return {
+	const data = {
 		language: res.language,
-		output: res.run.output,
-		stderr: res.run.stderr
+		output: res.output,
+		stderr: res.exitCode !== 0 ? res.output : ''
 	};
+
+	await setCache(lang, code, data);
+
+	return data;
 });
 
 app.listen(3000, '0.0.0.0');
