@@ -242,6 +242,7 @@ async fn post_bot_list(guilds: usize) -> Result<(), Error> {
     http.post("https://api.infinitybotlist.com/bot/871593892280160276")
         .json(&infinity_body)
         .header("authorization", var("INFINITY_KEY")?)
+        .header("Content-Type", "application/json")
         .send()
         .await?;
 
