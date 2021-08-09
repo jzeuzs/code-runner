@@ -15,7 +15,7 @@ const getCache = async (lang: string, code: string) => {
 	const cached = await redis.get(`${lang}-${code}`).catch(() => null);
 
 	if (!cached) return null;
-	
+
 	return JSON.parse(cached);
 };
 const setCache = (lang: string, code: string, data: Record<string, string>) => redis.setex(`${lang}-${code}`, 604800, JSON.stringify(data));
@@ -243,6 +243,92 @@ app.post('/', async (req, _reply) => {
 			if (cached) return cached;
 
 			const res = await tio(code, 'agda');
+			const data = {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+
+			await setCache(lang, code, data);
+
+			return data;
+		}
+		case 'factor': {
+			lang = 'factor';
+			const cached = await getCache(lang, code);
+
+			if (cached) return cached;
+
+			const res = await tio(code, 'factor');
+			const data = {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+
+			await setCache(lang, code, data);
+
+			return data;
+		}
+		case 'ceylon': {
+			lang = 'ceylon';
+			const cached = await getCache(lang, code);
+
+			if (cached) return cached;
+
+			const res = await tio(code, 'ceylon');
+			const data = {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+
+			await setCache(lang, code, data);
+
+			return data;
+		}
+		case 'io': {
+			lang = 'io';
+			const cached = await getCache(lang, code);
+
+			if (cached) return cached;
+
+			const res = await tio(code, 'io');
+			const data = {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+
+			await setCache(lang, code, data);
+
+			return data;
+		}
+		case 'make':
+		case 'makefile': {
+			lang = 'make';
+			const cached = await getCache(lang, code);
+
+			if (cached) return cached;
+
+			const res = await tio(code, 'make');
+			const data = {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+
+			await setCache(lang, code, data);
+
+			return data;
+		}
+		case 'yabasic': {
+			lang = 'yabasic';
+			const cached = await getCache(lang, code);
+
+			if (cached) return cached;
+
+			const res = await tio(code, 'yabasic');
 			const data = {
 				language: res.language,
 				output: res.output,

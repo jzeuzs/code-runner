@@ -78,6 +78,11 @@ A code runner discord bot.
 - [`mamba`](https://github.com/JSAbrahams/mamba)
 - [`sqlite`](https://www.sqlite.org/)
 - [`agda`](https://wiki.portal.chalmers.se/agda)
+- [`factor`](https://factorcode.org/)
+- [`ceylon`](https://ceylon-lang.org/)
+- [`io`](https://iolanguage.org/)
+- [`make`](https://www.gnu.org/software/make/)
+- [`yabasic`](https://www.yabasic.de/)
 
 ## Privacy Policy
 

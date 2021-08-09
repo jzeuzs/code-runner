@@ -119,7 +119,7 @@ async fn run(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error
             poise::say_reply(
                 poise::Context::Prefix(ctx),
                 "The codeblock is missing a language...
-Visit https://github.com/1chiSensei/code-runner#supportedlanguages to know all of the supported languages!
+Visit https://github.com/1chiSensei/code-runner#supported-languages to know all of the supported languages!
                 ".to_string(),
             )
             .await?;
@@ -134,7 +134,7 @@ Visit https://github.com/1chiSensei/code-runner#supportedlanguages to know all o
                     poise::say_reply(
                         poise::Context::Prefix(ctx),
                         "You provided an invalid language...
-Visit https://github.com/1chiSensei/code-runner#supportedlanguages to know all of the supported languages!
+Visit https://github.com/1chiSensei/code-runner#supported-languages to know all of the supported languages!
                         ".to_string(),
                     )
                     .await?;
@@ -163,6 +163,9 @@ Visit https://github.com/1chiSensei/code-runner#supportedlanguages to know all o
                         );
 
                         poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
+                        Ok(())
+                    } else if re.output.chars().count() == 0 {
+                        poise::say_reply(poise::Context::Prefix(ctx), "Your code yielded no results.".to_string()).await?;
                         Ok(())
                     } else {
                         let lang = re.language;
@@ -212,7 +215,7 @@ async fn info(ctx: PrefixContext<'_>) -> Result<(), Error> {
     let os = linux_os_release()?;
     let msg = format!(
         "I am a bot that runs code.
-Supported Languages: <https://github.com/1chiSensei/code-runner#supportedlanguages>
+Supported Languages: <https://github.com/1chiSensei/code-runner#supported-languages>
 
 Version: `{}`
 Rust: `{}`
