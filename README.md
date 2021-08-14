@@ -84,6 +84,10 @@ A code runner discord bot.
 - [`make`](https://www.gnu.org/software/make/)
 - [`yabasic`](https://www.yabasic.de/)
 
+## Vote
+
+[![Discord Bots](https://top.gg/api/widget/871593892280160276.svg)](https://top.gg/bot/871593892280160276)
+
 ## Privacy Policy
 
 We do not store any data at all. Contact us at our [discord server](https://discord.gg/zGvtAnGhdP).

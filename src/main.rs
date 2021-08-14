@@ -3,8 +3,9 @@ extern crate version;
 
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
-use std::{collections::HashMap, env::var, process::Command, time::Duration};
+use std::{collections::HashMap, env::var, process::Command, time::Duration, convert::TryInto};
 use sys_info::linux_os_release;
+use topgg::Topgg;
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
@@ -150,7 +151,7 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
 <{}>
                         ", url);
 
-                        poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
+                        poise::say_prefix_reply(ctx, msg).await?;
                         Ok(())
                     } else if re.stderr.chars().count() > 0 {
                         let msg = format!(
@@ -162,10 +163,10 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
                             re.stderr
                         );
 
-                        poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
+                        poise::say_prefix_reply(ctx, msg).await?;
                         Ok(())
                     } else if re.output.chars().count() == 0 {
-                        poise::say_reply(poise::Context::Prefix(ctx), "Your code yielded no results.".to_string()).await?;
+                        poise::say_prefix_reply(ctx, "Your code yielded no results.".to_string()).await?;
                         Ok(())
                     } else {
                         let lang = re.language;
@@ -177,7 +178,7 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
                             &lang, re.output
                         );
 
-                        poise::say_reply(poise::Context::Prefix(ctx), msg).await?;
+                        poise::say_prefix_reply(ctx, msg).await?;
                         Ok(())
                     }
                 }
@@ -236,6 +237,21 @@ fn info_help() -> String {
     "Shows general information about the bot.".to_string()
 }
 
+#[poise::command(track_edits, explanation_fn = "vote_help")]
+async fn vote(ctx: PrefixContext<'_>) -> Result<(), Error> {
+    let msg = "Vote for me here!
+<https://top.gg/bot/871593892280160276/vote>
+<https://infinitybotlist.com/bots/871593892280160276/vote>
+    ";
+
+    poise::say_prefix_reply(ctx, msg.to_string()).await?;
+    Ok(())
+}
+
+fn vote_help() -> String {
+    "Shows where you can vote for the bot.".to_string()
+}
+
 async fn post_bot_list(guilds: usize) -> Result<(), Error> {
     let http = reqwest::Client::new();
     let mut infinity_body: HashMap<String, usize> = HashMap::new();
@@ -260,9 +276,15 @@ async fn listener(
 ) -> Result<(), Error> {
     match event {
         poise::Event::Ready { data_about_bot } => {
+            println!("Bot is ready! Serving {} guilds", data_about_bot.guilds.len());
+
             post_bot_list(data_about_bot.guilds.len()).await?;
             ctx.set_activity(serenity::Activity::playing("~run | ~help"))
                 .await;
+
+            let topgg = Topgg::new(871593892280160276, var("TOP_GG")?);
+
+            topgg.post_bot_stats(Some(data_about_bot.guilds.len().try_into()?), None, None, None).await?;
 
             Ok(())
         }
@@ -289,6 +311,7 @@ async fn main() -> Result<(), Error> {
     options.command(run(), |f| f.category("Main"));
     options.command(source(), |f| f.category("Main"));
     options.command(info(), |f| f.category("Main"));
+    options.command(vote(), |f| f.category("Main"));
 
     let framework = poise::Framework::new(
         "~".to_owned(),
