@@ -10,6 +10,7 @@ RUN apt-get update && \
 	apt-get install -y git build-essential neofetch curl && \
 	git clone https://github.com/kangalioo/poise && \
 	curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+	apt-get install -y nodejs && \
 	npm i -g yarn pm2 && \
 	cd server && \
 	yarn && \
