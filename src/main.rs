@@ -3,15 +3,21 @@ extern crate version;
 
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
-use std::{collections::HashMap, env::var, process::Command, time::Duration, convert::TryInto};
+use std::{collections::HashMap, convert::TryInto, env::var, process::{Command, Stdio}, time::Duration};
 use sys_info::linux_os_release;
 use topgg::Topgg;
+use execute::{Execute, command};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
 
 struct Data {
     http: reqwest::Client,
+    owner_id: serenity::UserId
+}
+
+async fn is_owner(ctx: PrefixContext<'_>) -> Result<bool, Error> {
+    Ok(ctx.msg.author.id == ctx.data.owner_id)
 }
 
 async fn on_error(error: Error, ctx: poise::ErrorContext<'_, Data, Error>) {
@@ -166,7 +172,8 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
                         poise::say_prefix_reply(ctx, msg).await?;
                         Ok(())
                     } else if re.output.chars().count() == 0 {
-                        poise::say_prefix_reply(ctx, "Your code yielded no results.".to_string()).await?;
+                        poise::say_prefix_reply(ctx, "Your code yielded no results.".to_string())
+                            .await?;
                         Ok(())
                     } else {
                         let lang = re.language;
@@ -252,6 +259,21 @@ fn vote_help() -> String {
     "Shows where you can vote for the bot.".to_string()
 }
 
+#[poise::command(check = "is_owner", hide_in_help, aliases("sh", "bash", "$"))]
+async fn exec(ctx: PrefixContext<'_>, code: String) -> Result<(), Error> {
+    let mut command = command(code);
+
+    command.stdout(Stdio::piped());
+
+    let msg = format!("```sh
+{}
+```
+    ", String::from_utf8(command.execute_output()?.stdout)?);
+
+    poise::say_prefix_reply(ctx, msg).await?;
+    Ok(())
+}
+
 async fn post_bot_list(guilds: usize) -> Result<(), Error> {
     let http = reqwest::Client::new();
     let mut infinity_body: HashMap<String, usize> = HashMap::new();
@@ -276,7 +298,10 @@ async fn listener(
 ) -> Result<(), Error> {
     match event {
         poise::Event::Ready { data_about_bot } => {
-            println!("Bot is ready! Serving {} guilds", data_about_bot.guilds.len());
+            println!(
+                "Bot is ready! Serving {} guilds",
+                data_about_bot.guilds.len()
+            );
 
             post_bot_list(data_about_bot.guilds.len()).await?;
             ctx.set_activity(serenity::Activity::playing("~run | ~help"))
@@ -284,7 +309,14 @@ async fn listener(
 
             let topgg = Topgg::new(871593892280160276, var("TOP_GG")?);
 
-            topgg.post_bot_stats(Some(data_about_bot.guilds.len().try_into()?), None, None, None).await?;
+            topgg
+                .post_bot_stats(
+                    Some(data_about_bot.guilds.len().try_into()?),
+                    None,
+                    None,
+                    None,
+                )
+                .await?;
 
             Ok(())
         }
@@ -312,6 +344,7 @@ async fn main() -> Result<(), Error> {
     options.command(source(), |f| f.category("Main"));
     options.command(info(), |f| f.category("Main"));
     options.command(vote(), |f| f.category("Main"));
+    options.command(exec(), |f| f);
 
     let framework = poise::Framework::new(
         "~".to_owned(),
@@ -320,6 +353,7 @@ async fn main() -> Result<(), Error> {
             Box::pin(async move {
                 Ok(Data {
                     http: reqwest::Client::new(),
+                    owner_id: serenity::UserId(566155739652030465)
                 })
             })
         },
