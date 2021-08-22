@@ -1,19 +1,23 @@
 #[macro_use]
 extern crate version;
 
+use execute::{command, Execute};
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
-use std::{collections::HashMap, convert::TryInto, env::var, process::{Command, Stdio}, time::Duration};
+use std::{
+    collections::HashMap,
+    env::var,
+    process::{Command, Stdio},
+    time::Duration,
+};
 use sys_info::linux_os_release;
-use topgg::Topgg;
-use execute::{Execute, command};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
 
 struct Data {
     http: reqwest::Client,
-    owner_id: serenity::UserId
+    owner_id: serenity::UserId,
 }
 
 async fn is_owner(ctx: PrefixContext<'_>) -> Result<bool, Error> {
@@ -266,7 +270,7 @@ async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Error>
     command.stdout(Stdio::piped());
 
     let output = String::from_utf8(command.execute_output()?.stdout)?;
-    
+
     if output.chars().count() > 1500 {
         let url = post_bin(ctx, output).await?;
         let msg = format!("<{}>", url);
@@ -274,10 +278,13 @@ async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Error>
         poise::say_prefix_reply(ctx, msg).await?;
         Ok(())
     } else {
-        let msg = format!("```sh
+        let msg = format!(
+            "```sh
 {}
 ```
-        ", output);
+        ",
+            output
+        );
 
         poise::say_prefix_reply(ctx, msg).await?;
         Ok(())
@@ -286,13 +293,12 @@ async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Error>
 
 async fn post_bot_list(guilds: usize) -> Result<(), Error> {
     let http = reqwest::Client::new();
-    let mut infinity_body: HashMap<String, usize> = HashMap::new();
+    let mut body: HashMap<String, usize> = HashMap::new();
 
-    infinity_body.insert("servers".to_string(), guilds);
+    body.insert("server_count".to_string(), guilds);
 
-    http.post("https://api.infinitybotlist.com/bot/871593892280160276")
-        .json(&infinity_body)
-        .header("authorization", var("INFINITY_KEY")?)
+    http.post(format!("{}/post-bot-stats", var("API_URL")?))
+        .json(&body)
         .header("Content-Type", "application/json")
         .send()
         .await?;
@@ -316,17 +322,6 @@ async fn listener(
             post_bot_list(data_about_bot.guilds.len()).await?;
             ctx.set_activity(serenity::Activity::playing("~run | ~help"))
                 .await;
-
-            let topgg = Topgg::new(871593892280160276, var("TOP_GG")?);
-
-            topgg
-                .post_bot_stats(
-                    Some(data_about_bot.guilds.len().try_into()?),
-                    None,
-                    None,
-                    None,
-                )
-                .await?;
 
             Ok(())
         }
@@ -363,7 +358,7 @@ async fn main() -> Result<(), Error> {
             Box::pin(async move {
                 Ok(Data {
                     http: reqwest::Client::new(),
-                    owner_id: serenity::UserId(566155739652030465)
+                    owner_id: serenity::UserId(566155739652030465),
                 })
             })
         },

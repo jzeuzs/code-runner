@@ -18,6 +18,7 @@
 		"@sapphire/ts-config": "^3.0.0",
 		"@types/ioredis": "^4.26.7",
 		"@types/node": "^16.6.2",
+		"@types/node-fetch": "^2.5.12",
 		"@types/pino": "^6.3.11",
 		"eslint": "^7.32.0",
 		"prettier": "^2.3.2",
@@ -26,6 +27,7 @@
 	"dependencies": {
 		"@mgcrea/fastify-request-logger": "^0.5.2",
 		"@mgcrea/pino-pretty-compact": "^0.5.0",
+		"@sapphire/fetch": "^1.0.5",
 		"fastify": "^3.20.2",
 		"fastify-cookie": "^5.3.1",
 		"fastify-formbody": "^5.1.0",
@@ -36,5 +38,17 @@
 		"postinstall-postinstall": "^2.1.0",
 		"tio.js": "^1.1.0"
 	},
-	"prettier": "@sapphire/prettier-config"
+	"prettier": "@sapphire/prettier-config",
+	"eslintConfig": {
+		"root": false,
+		"extends": "@sapphire/eslint-config",
+		"parserOptions": {
+			"project": "./server/tsconfig.eslint.json"
+		},
+		"rules": {
+			"@typescript-eslint/no-floating-promises": "off",
+			"no-duplicate-case": "off",
+			"no-negated-condition": "off"
+		}
+	}
 }
