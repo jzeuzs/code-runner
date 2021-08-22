@@ -260,8 +260,8 @@ fn vote_help() -> String {
 }
 
 #[poise::command(check = "is_owner", hide_in_help, aliases("sh", "bash", "$"))]
-async fn exec(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error> {
-    let mut command = command(code.code);
+async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Error> {
+    let mut command = command(code);
 
     command.stdout(Stdio::piped());
 
