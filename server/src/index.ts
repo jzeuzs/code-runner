@@ -410,4 +410,4 @@ app.post('/post-bot-stats', async (req, reply) => {
 	reply.status(204);
 });
 
-app.listen(3000, '0.0.0.0');
+app.listen(process.env.PORT!, '0.0.0.0');
