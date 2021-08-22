@@ -3,7 +3,6 @@ FROM liuchong/rustup:nightly-onbuild
 WORKDIR /code-runner
 COPY . .
 
-ARG PORT
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
@@ -21,4 +20,4 @@ RUN apt-get update && \
 	chmod +x /tini
 
 ENTRYPOINT ["/tini", "--"]
-CMD ["pm2-runtime", "./target/release/code-runner"]
+CMD ["bash", "run.sh"]
