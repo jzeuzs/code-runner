@@ -260,18 +260,28 @@ fn vote_help() -> String {
 }
 
 #[poise::command(check = "is_owner", hide_in_help, aliases("sh", "bash", "$"))]
-async fn exec(ctx: PrefixContext<'_>, code: String) -> Result<(), Error> {
-    let mut command = command(code);
+async fn exec(ctx: PrefixContext<'_>) -> Result<(), Error> {
+    let mut command = command(ctx.msg.content.clone());
 
     command.stdout(Stdio::piped());
 
-    let msg = format!("```sh
+    let output = String::from_utf8(command.execute_output()?.stdout)?;
+    
+    if output.chars().count() > 1500 {
+        let url = post_bin(ctx, output).await?;
+        let msg = format!("<{}>", url);
+
+        poise::say_prefix_reply(ctx, msg).await?;
+        Ok(())
+    } else {
+        let msg = format!("```sh
 {}
 ```
-    ", String::from_utf8(command.execute_output()?.stdout)?);
+        ", output);
 
-    poise::say_prefix_reply(ctx, msg).await?;
-    Ok(())
+        poise::say_prefix_reply(ctx, msg).await?;
+        Ok(())
+    }
 }
 
 async fn post_bot_list(guilds: usize) -> Result<(), Error> {
