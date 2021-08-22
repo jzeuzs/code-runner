@@ -167,8 +167,23 @@ app.post('/', async (req, _reply) => {
 			lang = 'ruby';
 			break;
 		case 'rs':
+		case 'rustlang':
+		case 'rust':
 			lang = 'rust';
-			break;
+			const cached = await getCache(lang, code);
+
+			if (cached) return cached;
+
+			const res = await tio(code, 'rust');
+			const data = {
+				language: res.language,
+				output: res.output,
+				stderr: res.exitCode !== 0 ? res.output : ''
+			};
+
+			await setCache(lang, code, data);
+
+			return data;
 		case 'sc':
 			lang = 'scala';
 			break;
