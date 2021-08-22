@@ -3,6 +3,7 @@ FROM liuchong/rustup:nightly-onbuild
 WORKDIR /code-runner
 COPY . .
 
+ARG PORT
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 
@@ -14,7 +15,6 @@ RUN apt-get update && \
 	cd server && \
 	yarn && \
 	yarn build && \
-	pm2 start ./dist/index.js --name server && \
 	cd - && \
 	cargo install loc && \
 	cargo build --release && \
