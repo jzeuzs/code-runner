@@ -1,4 +1,4 @@
-use crate::{PrefixContext, Error, post_bin};
+use crate::{post_bin, Error, PrefixContext};
 use serde::Deserialize;
 use std::env::var;
 

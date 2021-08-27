@@ -1,4 +1,4 @@
-use crate::{PrefixContext, Error};
+use crate::{Error, PrefixContext};
 
 #[poise::command(track_edits, explanation_fn = "help_help")]
 pub async fn help(ctx: PrefixContext<'_>, command: Option<String>) -> Result<(), Error> {

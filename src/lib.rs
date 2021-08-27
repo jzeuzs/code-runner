@@ -5,11 +5,7 @@ extern crate version;
 
 use poise::serenity_prelude as serenity;
 use serde::Deserialize;
-use std::{
-    collections::HashMap,
-    env::var,
-    time::Duration,
-};
+use std::{collections::HashMap, env::var, time::Duration};
 
 pub const EMBED_COLOR: serenity::Color = serenity::Color::from_rgb(47, 49, 54);
 
@@ -111,7 +107,6 @@ async fn listener(
 pub async fn main() -> Result<(), Error> {
     let mut options = poise::FrameworkOptions {
         prefix_options: poise::PrefixFrameworkOptions {
-            additional_prefixes: &["run,", "run, ", "can you run, ", "run"],
             edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(
                 3600 * 24 * 2,
             ))),

@@ -1,8 +1,13 @@
-use crate::{Error, PrefixContext, is_owner, post_bin};
-use std::process::Stdio;
+use crate::{is_owner, post_bin, Error, PrefixContext};
 use execute::{command, Execute};
+use std::process::Stdio;
 
-#[poise::command(track_edits, check = "is_owner", hide_in_help, aliases("sh", "bash", "$"))]
+#[poise::command(
+    track_edits,
+    check = "is_owner",
+    hide_in_help,
+    aliases("sh", "bash", "$")
+)]
 pub async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Error> {
     let mut command = command(code);
 
