@@ -16,11 +16,11 @@ struct Response {
     aliases("npm", "pnpm", "node-pkg")
 )]
 pub async fn yarn(ctx: PrefixContext<'_>, name: String) -> Result<(), Error> {
-    let url = format!("{}/npm?name={}", var("API_URL")?, name);
     let data = ctx
         .data
         .http
-        .get(url)
+        .get(format!("{}/npm", var("API_URL")?))
+        .query(&[("name", name)])
         .send()
         .await?
         .json::<Response>()
