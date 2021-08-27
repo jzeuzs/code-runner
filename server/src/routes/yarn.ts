@@ -42,7 +42,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 		const mainFile = latestVersion.main || 'index.js';
 
 		return {
-			name,
+			name: result.name,
 			url: `https://yarnpkg.com/package/${name}`,
 			description: cutText(
 				[
