@@ -15,7 +15,7 @@ export const setCache = (redis: Redis.Redis, lang: string, code: string, data: R
 	redis.setex(`${lang}-${code}`, 604800, JSON.stringify(data));
 
 export const loadRoutes = async (app: FastifyInstance) => {
-	const files = await readdir('./dist/routes');
+	const files = await readdir('./server/dist/routes');
 
 	for (const file of files.filter((f) => f.endsWith('.js'))) {
 		const name = file.split('.')[0];
