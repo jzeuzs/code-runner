@@ -1,7 +1,7 @@
 cargo-features = ["edition2021"]
 
 [package]
-name = "code-runner"
+name = "coderunner"
 version = "1.0.0"
 edition = "2018"
 

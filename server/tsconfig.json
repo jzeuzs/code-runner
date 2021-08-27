@@ -1,10 +1,16 @@
 {
 	"extends": "@sapphire/ts-config",
 	"compilerOptions": {
+		"baseUrl": ".",
 		"outDir": "dist",
 		"rootDir": "src",
 		"target": "ESNext",
 		"module": "ESNext",
-		"typeRoots": ["./types"]
+		"typeRoots": ["./types"],
+		"paths": {
+			"#root/*": ["src/*"],
+			"#routes/*": ["src/routes/*"],
+			"#types/*": ["src/types/*"]
+		}
 	}
 }

@@ -12,10 +12,15 @@
 		"build": "tsc",
 		"start": "node ."
 	},
+	"imports": {
+		"#root/*": "./dist/*.js",
+		"#routes/*": "./dist/routes/*.js"
+	},
 	"devDependencies": {
 		"@sapphire/eslint-config": "^3.2.3",
 		"@sapphire/prettier-config": "^1.1.6",
 		"@sapphire/ts-config": "^3.0.0",
+		"@types/glob": "^7.1.4",
 		"@types/ioredis": "^4.26.7",
 		"@types/node": "^16.6.2",
 		"@types/node-fetch": "^2.5.12",
@@ -28,9 +33,12 @@
 		"@mgcrea/fastify-request-logger": "^0.5.2",
 		"@mgcrea/pino-pretty-compact": "^0.5.0",
 		"@sapphire/fetch": "^1.0.5",
+		"@sapphire/utilities": "^2.0.1",
+		"consola": "^2.15.3",
 		"fastify": "^3.20.2",
 		"fastify-cookie": "^5.3.1",
 		"fastify-formbody": "^5.1.0",
+		"glob": "^7.1.7",
 		"ioredis": "^4.27.8",
 		"patch-package": "^6.4.7",
 		"pino-pretty": "^5.1.3",
