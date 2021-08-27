@@ -19,7 +19,7 @@ pub async fn yarn(ctx: PrefixContext<'_>, name: String) -> Result<(), Error> {
     let data = ctx
         .data
         .http
-        .get(format!("{}/npm", var("API_URL")?))
+        .get(format!("{}/yarn", var("API_URL")?))
         .query(&[("name", name)])
         .send()
         .await?
