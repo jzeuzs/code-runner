@@ -49,7 +49,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 					description,
 					'',
 					author ? `Author: ${author}` : undefined,
-					`Maintainers: **${trimArray(maintainers)}**`,
+					`Maintainers: **${trimArray(maintainers).join(', ')}**`,
 					`Version: **${latestVersionNumber}**`,
 					`Entry File: **${mainFile}**`,
 					`License: **${license}**`,
@@ -57,7 +57,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 					`Modified at: **${dateModified}**`,
 					'',
 					'_Package Dependencies:_',
-					dependencies?.length ? dependencies : 'No dependencies.'
+					dependencies?.length ? dependencies.join(', ') : 'No dependencies.'
 				]
 					.filter((i) => i !== undefined)
 					.join('\n'),
