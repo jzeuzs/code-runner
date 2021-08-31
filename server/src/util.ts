@@ -75,7 +75,7 @@ export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string
 			headers: {
 				Authorization: process.env.UPLOAD_AUTH!,
 				domain: 'i.tomio.codes',
-				'Content-Type': 'application/x-www-form-urlencoded'
+				'Content-Type': 'multipart/form-data'
 			},
 			body: form,
 			method: 'POST'
