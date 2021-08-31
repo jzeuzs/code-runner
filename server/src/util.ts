@@ -58,14 +58,14 @@ export const bufferToStream = (buffer: Buffer) => {
 	return stream;
 };
 
-export const uploadImage = async (stream: Readable, redis: Redis.Redis, code: string) => {
+export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string) => {
 	const cached = await redis.get(`format-${code}`);
 
 	if (cached) return cached;
 
 	const form = new FormData();
 
-	form.append('file', stream);
+	form.append('file', file);
 
 	const {
 		data: { direct_url }
