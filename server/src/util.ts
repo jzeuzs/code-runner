@@ -2,6 +2,14 @@ import type Redis from 'ioredis';
 import type { FastifyInstance } from 'fastify';
 import logger from 'consola';
 import { readdir } from 'fs/promises';
+import { Readable } from 'stream';
+import { fetch, FetchResultTypes } from '@sapphire/fetch';
+import FormData from 'form-data';
+
+export const enum Seconds {
+	WEEK = 604_800,
+	MONTH = 2_629_800
+}
 
 export const getCache = async (redis: Redis.Redis, lang: string, code: string) => {
 	const cached = await redis.get(`${lang}-${code}`).catch(() => null);
@@ -12,7 +20,7 @@ export const getCache = async (redis: Redis.Redis, lang: string, code: string) =
 };
 
 export const setCache = (redis: Redis.Redis, lang: string, code: string, data: Record<string, string>) =>
-	redis.setex(`${lang}-${code}`, 604800, JSON.stringify(data));
+	redis.setex(`${lang}-${code}`, Seconds.WEEK, JSON.stringify(data));
 
 export const loadRoutes = async (app: FastifyInstance) => {
 	const files = await readdir('./server/dist/routes');
@@ -37,4 +45,45 @@ export const trimArray = (arr: string[]) => {
 	}
 
 	return arr;
+};
+
+export const bufferToStream = (buffer: Buffer) => {
+	const stream = new Readable({
+		read() {
+			this.push(buffer);
+			this.push(null);
+		}
+	});
+
+	return stream;
+};
+
+export const uploadImage = async (stream: Readable, redis: Redis.Redis, code: string) => {
+	const cached = await redis.get(`format-${code}`);
+
+	if (cached) return cached;
+
+	const form = new FormData();
+
+	form.append('file', stream);
+
+	const {
+		data: { direct_url }
+	} = await fetch<Record<string, Record<string, string>>>(
+		'https://api.tixte.com/v1/upload',
+		{
+			headers: {
+				Authorization: process.env.UPLOAD_AUTH!,
+				domain: 'i.tomio.codes',
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: form,
+			method: 'POST'
+		},
+		FetchResultTypes.JSON
+	);
+
+	await redis.set(`format-${code}`, direct_url);
+
+	return direct_url;
 };

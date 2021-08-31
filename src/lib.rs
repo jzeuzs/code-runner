@@ -7,7 +7,7 @@ use poise::serenity_prelude as serenity;
 use serde::Deserialize;
 use std::{collections::HashMap, env::var, time::Duration};
 
-pub const EMBED_COLOR: serenity::Color = serenity::Color::from_rgb(47, 49, 54);
+pub const EMBED_COLOR: serenity::Color = serenity::Color::from_rgb(254, 254, 250);
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type PrefixContext<'a> = poise::PrefixContext<'a, Data, Error>;
@@ -123,6 +123,7 @@ pub async fn main() -> Result<(), Error> {
     options.command(commands::info(), |f| f.category("Main"));
     options.command(commands::vote(), |f| f.category("Main"));
     options.command(commands::yarn(), |f| f.category("Main"));
+    options.command(commands::format(), |f| f.category("Main"));
     options.command(commands::exec(), |f| f);
 
     let framework = poise::Framework::new(

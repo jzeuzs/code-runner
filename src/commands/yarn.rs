@@ -9,13 +9,7 @@ struct Response {
     description: String,
 }
 
-#[poise::command(
-    track_edits,
-    broadcast_typing,
-    explanation_fn = "yarn_help",
-    aliases("npm", "pnpm", "node-pkg")
-)]
-pub async fn yarn(ctx: PrefixContext<'_>, name: String) -> Result<(), Error> {
+async fn fetch_yarn(ctx: PrefixContext<'_>, name: String) -> Result<Response, Error> {
     let data = ctx
         .data
         .http
@@ -26,16 +20,36 @@ pub async fn yarn(ctx: PrefixContext<'_>, name: String) -> Result<(), Error> {
         .json::<Response>()
         .await?;
 
-    poise::send_prefix_reply(ctx, |m| {
-        m.embed(|m| {
-            m.title(data.name)
-                .url(data.url)
-                .description(data.description)
-                .color(EMBED_COLOR)
-        })
-    })
-    .await?;
-    Ok(())
+    Ok(data)
+}
+
+#[poise::command(
+    track_edits,
+    broadcast_typing,
+    explanation_fn = "yarn_help",
+    aliases("npm", "pnpm", "node-pkg")
+)]
+pub async fn yarn(ctx: PrefixContext<'_>, name: String) -> Result<(), Error> {
+    let d = fetch_yarn(ctx, name).await;
+
+    match d {
+        Err(_) => {
+            poise::say_prefix_reply(ctx, "That package could not be found.".to_string()).await?;
+            Ok(())
+        }
+        Ok(data) => {
+            poise::send_prefix_reply(ctx, |m| {
+                m.embed(|m| {
+                    m.title(data.name)
+                        .url(data.url)
+                        .description(data.description)
+                        .color(EMBED_COLOR)
+                })
+            })
+            .await?;
+            Ok(())
+        }
+    }
 }
 
 fn yarn_help() -> String {
