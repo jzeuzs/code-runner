@@ -58,7 +58,7 @@ export const bufferToStream = (buffer: Buffer) => {
 	return stream;
 };
 
-export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string) => {
+export const uploadImage = async (file: Readable, redis: Redis.Redis, code: string) => {
 	const cached = await redis.get(`format-${code}`);
 
 	if (cached) return cached;
