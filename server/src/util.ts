@@ -49,23 +49,22 @@ export const trimArray = (arr: string[]) => {
 
 export const bufferToStream = (buffer: Buffer) => Readable.from(buffer.toString());
 
-export const uploadImage = async (file: Readable, redis: Redis.Redis, code: string) => {
+export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string) => {
 	const cached = await redis.get(`format-${code}`);
 
 	if (cached) return cached;
 
 	const form = new FormData();
 
-	form.append('file', file);
+	form.append('image', file.toString('base64'));
 
 	const {
-		data: { direct_url }
+		data: { link }
 	} = await fetch<Record<string, Record<string, string>>>(
-		'https://api.tixte.com/v1/upload',
+		'https://api.imgur.com/3/image',
 		{
 			headers: {
-				Authorization: process.env.UPLOAD_AUTH!,
-				domain: 'i.tomio.codes',
+				Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
 				'Content-Type': 'multipart/form-data',
 				...form.getHeaders()
 			},
@@ -75,7 +74,7 @@ export const uploadImage = async (file: Readable, redis: Redis.Redis, code: stri
 		FetchResultTypes.JSON
 	);
 
-	await redis.set(`format-${code}`, direct_url);
+	await redis.set(`format-${code}`, link);
 
-	return direct_url;
+	return link;
 };
