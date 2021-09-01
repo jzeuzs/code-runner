@@ -47,16 +47,7 @@ export const trimArray = (arr: string[]) => {
 	return arr;
 };
 
-export const bufferToStream = (buffer: Buffer) => {
-	const stream = new Readable({
-		read() {
-			this.push(buffer);
-			this.push(null);
-		}
-	});
-
-	return stream;
-};
+export const bufferToStream = (buffer: Buffer) => Readable.from(buffer.toString());
 
 export const uploadImage = async (file: Readable, redis: Redis.Redis, code: string) => {
 	const cached = await redis.get(`format-${code}`);
@@ -75,7 +66,8 @@ export const uploadImage = async (file: Readable, redis: Redis.Redis, code: stri
 			headers: {
 				Authorization: process.env.UPLOAD_AUTH!,
 				domain: 'i.tomio.codes',
-				'Content-Type': 'multipart/form-data'
+				'Content-Type': 'multipart/form-data',
+				...form.getHeaders()
 			},
 			body: form,
 			method: 'POST'
