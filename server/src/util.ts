@@ -57,6 +57,7 @@ export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string
 	const form = new FormData();
 
 	form.append('image', file.toString('base64'));
+	form.append('type', 'base64');
 
 	const {
 		data: { link }
