@@ -5,6 +5,7 @@ import { readdir } from 'fs/promises';
 import { Readable } from 'stream';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import FormData from 'form-data';
+import toDataUrl from 'buffer-to-data-url';
 
 export const enum Seconds {
 	WEEK = 604_800,
@@ -56,7 +57,7 @@ export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string
 
 	const form = new FormData();
 
-	form.append('image', file.toString('base64'));
+	form.append('image', toDataUrl('image/png', file));
 	form.append('type', 'base64');
 
 	const {
