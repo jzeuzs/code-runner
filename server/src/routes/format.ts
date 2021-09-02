@@ -2,7 +2,9 @@ import type { FastifyInstance } from 'fastify';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import redis from '#root/db';
 import { Seconds } from '#root/util';
-import toDataUrl from 'buffer-to-data-url';
+
+// @ts-expect-error Doesn't work with default import
+import * as toDataUrl from 'buffer-to-data-url';
 
 export default (app: FastifyInstance, _: any, done: () => void) => {
 	app.post('/', async (req, _reply) => {
