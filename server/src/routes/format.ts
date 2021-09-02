@@ -3,16 +3,13 @@ import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import redis from '#root/db';
 import { Seconds } from '#root/util';
 
-// @ts-expect-error Doesn't work with default import
-import * as toDataUrl from 'buffer-to-data-url';
-
 export default (app: FastifyInstance, _: any, done: () => void) => {
 	app.post('/', async (req, _reply) => {
 		const { code } = req.body as Record<string, string>;
 		const cached = await redis.getBuffer(`carbon-${code}`).catch(() => null);
 
 		if (cached) {
-			const url = await toDataUrl('image/png', cached);
+			const url = `data:image/png;base64,${cached.toString('base64')}`;
 
 			return { url };
 		}
@@ -51,7 +48,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 
 		await redis.setex(`carbon-${code}`, Seconds.MONTH, img);
 
-		const url = await toDataUrl('image/png', img);
+		const url = `data:image/png;base64,${img.toString('base64')}`;
 
 		return { url };
 	});
