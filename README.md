@@ -13,6 +13,9 @@ A code runner discord bot.
 - `help` - Gives a list of all commands or gives info about a command.
 - `source` - Links you to the github page of the bot.
 - `info` - Provides general information about the bot.
+- `vote` - Gives you a link to vote for the bot.
+- `yarn` - Searches [Yarn](https://yarnpkg.com) for your node package.
+- `format` - Formats your code into an image.
 
 ## Supported Languages
 

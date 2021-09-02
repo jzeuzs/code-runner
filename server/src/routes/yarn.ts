@@ -28,7 +28,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 		const { name } = req.query as Record<string, string>;
 		const result = await fetchYarn(name);
 
-		if (!result) return reply.status(404);
+		if (!result) return reply.notFound();
 
 		const maintainers = result.maintainers.map((user) => `[${user.name}](${user.url ?? `https://www.npmjs.com/~${user.name}`})`);
 		const latestVersion = result.versions[result['dist-tags'].latest];
