@@ -3,8 +3,7 @@ import type { FastifyInstance } from 'fastify';
 import logger from 'consola';
 import { readdir } from 'fs/promises';
 import { Readable } from 'stream';
-import { fetch, FetchResultTypes } from '@sapphire/fetch';
-import FormData from 'form-data';
+import Uploader from 'imgur-anonymous-uploader';
 
 export const enum Seconds {
 	WEEK = 604_800,
@@ -51,31 +50,13 @@ export const bufferToStream = (buffer: Buffer) => Readable.from(buffer.toString(
 
 export const uploadImage = async (file: Buffer, redis: Redis.Redis, code: string) => {
 	const cached = await redis.get(`format-${code}`);
+	const uploader = new Uploader(process.env.IMGUR_CLIENT_ID!);
 
 	if (cached) return cached;
 
-	const form = new FormData();
+	const { url } = await uploader.uploadBuffer(file);
 
-	form.append('image', `data:image/png;base64,${file.toString('base64')}`);
-	form.append('type', 'base64');
+	await redis.set(`format-${code}`, url);
 
-	const {
-		data: { link }
-	} = await fetch<Record<string, Record<string, string>>>(
-		'https://api.imgur.com/3/image',
-		{
-			headers: {
-				Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-				'Content-Type': 'multipart/form-data',
-				...form.getHeaders()
-			},
-			body: form,
-			method: 'POST'
-		},
-		FetchResultTypes.JSON
-	);
-
-	await redis.set(`format-${code}`, link);
-
-	return link;
+	return url;
 };
