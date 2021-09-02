@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import redis from '#root/db';
-import { Seconds, uploadImage } from '#root/util';
+import { Seconds } from '#root/util';
 import toDataUrl from 'buffer-to-data-url';
 
 export default (app: FastifyInstance, _: any, done: () => void) => {
