@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { fetch, FetchResultTypes } from '@sapphire/fetch';
 import redis from '#root/db';
 import { Seconds, uploadImage } from '#root/util';
+import toDataUrl from 'buffer-to-data-url';
 
 export default (app: FastifyInstance, _: any, done: () => void) => {
 	app.post('/', async (req, _reply) => {
@@ -9,7 +10,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 		const cached = await redis.getBuffer(`carbon-${code}`).catch(() => null);
 
 		if (cached) {
-			const url = await uploadImage(cached, redis, code);
+			const url = await toDataUrl('image/png', cached);
 
 			return { url };
 		}
@@ -48,7 +49,7 @@ export default (app: FastifyInstance, _: any, done: () => void) => {
 
 		await redis.setex(`carbon-${code}`, Seconds.MONTH, img);
 
-		const url = await uploadImage(img, redis, code);
+		const url = await toDataUrl('image/png', img);
 
 		return { url };
 	});
