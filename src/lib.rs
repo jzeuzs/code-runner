@@ -124,7 +124,7 @@ pub async fn main() -> Result<(), Error> {
     options.command(commands::vote(), |f| f.category("Main"));
     options.command(commands::yarn(), |f| f.category("Main"));
     options.command(commands::format(), |f| f.category("Main"));
-    options.command(commands::exec(), |f| f);
+    options.command(commands::exec(), |f| f.category("Main"));
 
     let framework = poise::Framework::new(
         "~".to_owned(),

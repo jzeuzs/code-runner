@@ -7,7 +7,7 @@ struct Response {
     url: String,
 }
 
-#[poise::command(track_edits, broadcast_typing, explanation_fn = "format_help")]
+#[poise::command(prefix_command, track_edits, broadcast_typing, explanation_fn = "format_help")]
 pub async fn format(ctx: PrefixContext<'_>, code: poise::CodeBlock) -> Result<(), Error> {
     let img = ctx
         .data

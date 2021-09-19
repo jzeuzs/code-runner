@@ -29,6 +29,7 @@ async fn execute_piston(
 }
 
 #[poise::command(
+    prefix_command,
     track_edits,
     broadcast_typing,
     explanation_fn = "run_help",
@@ -71,7 +72,7 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
 <{}>
                         ", url);
 
-                        poise::say_prefix_reply(ctx, msg).await?;
+                        poise::send_prefix_reply(ctx, |m| m.content(msg)).await?;
                         Ok(())
                     } else if re.stderr.chars().count() > 0 {
                         let msg = format!(
@@ -83,11 +84,10 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
                             re.stderr
                         );
 
-                        poise::say_prefix_reply(ctx, msg).await?;
+                        poise::send_prefix_reply(ctx, |m| m.content(msg)).await?;
                         Ok(())
                     } else if re.output.chars().count() == 0 {
-                        poise::say_prefix_reply(ctx, "Your code yielded no results.".to_string())
-                            .await?;
+                        poise::send_prefix_reply(ctx, |m| m.content("Your code yielded no results.")).await?;
                         Ok(())
                     } else {
                         let lang = re.language;
@@ -99,7 +99,7 @@ Visit https://github.com/1chiSensei/code-runner#supported-languages to know all 
                             &lang, re.output
                         );
 
-                        poise::say_prefix_reply(ctx, msg).await?;
+                        poise::send_prefix_reply(ctx, |m| m.content(msg)).await?;
                         Ok(())
                     }
                 }

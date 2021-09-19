@@ -1,15 +1,15 @@
 use crate::{Error, PrefixContext};
 
-#[poise::command(track_edits, explanation_fn = "help_help")]
+#[poise::command(prefix_command, track_edits, explanation_fn = "help_help")]
 pub async fn help(ctx: PrefixContext<'_>, command: Option<String>) -> Result<(), Error> {
     let bottom_text = "Type ~help command for more info on a command.
 You can edit your message to the bot and the bot will edit its response.";
 
-    poise::defaults::help(
+    poise::samples::help(
         poise::Context::Prefix(ctx),
         command.as_deref(),
         bottom_text,
-        poise::defaults::HelpResponseMode::Default,
+        poise::samples::HelpResponseMode::Default,
     )
     .await?;
 

@@ -3,6 +3,7 @@ use execute::{command, Execute};
 use std::process::Stdio;
 
 #[poise::command(
+    prefix_command,
     track_edits,
     check = "is_owner",
     hide_in_help,
@@ -19,7 +20,7 @@ pub async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Er
         let url = post_bin(ctx, output).await?;
         let msg = format!("<{}>", url);
 
-        poise::say_prefix_reply(ctx, msg).await?;
+        poise::send_prefix_reply(ctx, |m| m.content(msg)).await?;
         Ok(())
     } else {
         let msg = format!(
@@ -30,7 +31,7 @@ pub async fn exec(ctx: PrefixContext<'_>, #[rest] code: String) -> Result<(), Er
             output
         );
 
-        poise::say_prefix_reply(ctx, msg).await?;
+        poise::send_prefix_reply(ctx, |m| m.content(msg)).await?;
         Ok(())
     }
 }

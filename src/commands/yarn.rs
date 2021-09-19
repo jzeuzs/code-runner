@@ -24,6 +24,7 @@ async fn fetch_yarn(ctx: PrefixContext<'_>, name: String) -> Result<Response, Er
 }
 
 #[poise::command(
+    prefix_command,
     track_edits,
     broadcast_typing,
     explanation_fn = "yarn_help",
@@ -34,7 +35,7 @@ pub async fn yarn(ctx: PrefixContext<'_>, name: String) -> Result<(), Error> {
 
     match d {
         Err(_) => {
-            poise::say_prefix_reply(ctx, "That package could not be found.".to_string()).await?;
+            poise::send_prefix_reply(ctx, |m| m.content("That package could not be found.")).await?;
             Ok(())
         }
         Ok(data) => {
