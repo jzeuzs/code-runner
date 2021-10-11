@@ -1197,10 +1197,10 @@ into-stream@^6.0.0:
     from2 "^2.3.0"
     p-is-promise "^3.0.0"
 
-ioredis@^4.27.9:
-  version "4.27.9"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.9.tgz#c27bbade9724f0b8f84c279fb1d567be785ba33d"
-  integrity sha512-hAwrx9F+OQ0uIvaJefuS3UTqW+ByOLyLIV+j0EH8ClNVxvFyH9Vmb08hCL4yje6mDYT5zMquShhypkd50RRzkg==
+ioredis@^4.27.11:
+  version "4.27.11"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.27.11.tgz#2b30f698ac3b008d619b419e5b8aee2d5b341dc8"
+  integrity sha512-qBU2uCHgRs4kJT/qzxeFhbmizmNLQ1HH59EvKt1WnzDPMjjWxZS1+W6ynXdE47TxxqNLKYemJxEXXUb7Y4JJ+w==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.3.1"
