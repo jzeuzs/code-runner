@@ -43,7 +43,7 @@
 		"fastify-sensible": "^3.1.1",
 		"glob": "^7.1.7",
 		"imgur-anonymous-uploader": "^1.1.2",
-		"ioredis": "^4.27.9",
+		"ioredis": "^4.28.2",
 		"patch-package": "^6.4.7",
 		"pino-pretty": "^7.0.1",
 		"piston-client": "^1.0.2",
