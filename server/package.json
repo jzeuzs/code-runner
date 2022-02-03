@@ -35,7 +35,7 @@
 		"@sapphire/fetch": "^1.0.5",
 		"@sapphire/utilities": "^2.0.1",
 		"consola": "^2.15.3",
-		"fastify": "^3.21.3",
+		"fastify": "^3.27.1",
 		"fastify-compress": "^3.6.0",
 		"fastify-cookie": "^5.3.1",
 		"fastify-formbody": "^5.1.0",
